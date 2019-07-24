@@ -1,0 +1,22 @@
+{
+  "name": "automated-release-poc",
+  "version": "1.0.1",
+  "description": "Sample project to demonstrate automated release process.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ladvishal1985/automated-release-poc.git"
+  },
+  "author": "Vishal Lad",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ladvishal1985/automated-release-poc/issues"
+  },
+  "homepage": "https://github.com/ladvishal1985/automated-release-poc#readme",
+  "dependencies": {
+    "inquirer": "^6.5.0"
+  }
+}

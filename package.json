@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/ladvishal1985/automated-release-poc#readme",
   "dependencies": {
-    "inquirer": "^6.5.0"
+    "inquirer": "^6.5.0",
+    "simple-git": "^1.122.0"
   }
 }

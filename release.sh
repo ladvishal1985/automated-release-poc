@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
-# Assuming you have a master and dev branch, and that you make new
-# release branches named as the version they correspond to, e.g. 1.0.3
-# Usage: ./release.sh 1.0.3 develop master
+# Assuming you have a master and test branch, and that you make new
+# tag on master branch the script will do merge from develop to master 
+# push a new tag named as the version they correspond to, e.g. 1.0.3
+# Usage: ./release.sh 1.0.3 test master
 
 # Get version argument and verify
 version=$1 
 src=$2
 targ=$3
 
-# Get version from package.json
-#PKG_VERSION=$(node -pe "require('./package.json').version")
+
 
 if [ -z "$version" ] || [ -z "$src" ] || [ -z "$targ" ]; then
   echo "Please specify appropriate version, source branch and target branch"
@@ -19,15 +19,11 @@ fi
 
 
 # Output
+# Get version from package.json
+PKG_VERSION=$(node -pe "require('./package.json').version")
+echo "Current Application version is $PKG_VERSION"
 echo "Releasing version $version merging from $src -> $targ"
 echo "-------------------------------------------------------------------------"
-
-
-# Get current branch and checkout if needed
-# branch=$(git symbolic-ref --short -q HEAD)
-# if [ "$branch" != "$version" ]; then
-#  git checkout $version
-# fi
 
 # Ensure working directory in version branch clean
 git update-index -q --refresh
@@ -36,9 +32,21 @@ if ! git diff-index --quiet HEAD --; then
   exit
 fi
 
-# Checkout master branch and merge version branch into master
+# Checkout master branch and merge test branch into master
 git checkout $targ
+git pull 
 git merge $src --no-ff --no-edit
+
+# Revert the changes and exit if conflicts exists
+CONFLICTS=$(git ls-files -u | wc -l)
+echo "Conflicts $CONFLICTS"
+if [ "$CONFLICTS" -gt 0 ] ; then
+   echo "There is a merge conflict. Please update $src branch with $targ branch and resolve conflicts."
+   echo "Aborting"
+   git merge --abort
+   git checkout $src
+   exit 1
+fi
 
 # Run version script, creating a version tag, and push commit and tags to remote
 npm version $version

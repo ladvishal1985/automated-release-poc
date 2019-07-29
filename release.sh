@@ -12,11 +12,10 @@ targ=$3
 # Get version from package.json
 #PKG_VERSION=$(node -pe "require('./package.json').version")
 
-if [ -z "$version" || -z "$src" || -z "$targ"]; then
-  echo "Please specify a version or source branch and target branch"
+if [ -z "$version" ] || [ -z "$src" ] || [ -z "$targ" ]; then
+  echo "Please specify appropriate version, source branch and target branch"
   exit
 fi
-
 
 
 # Output
@@ -39,7 +38,6 @@ fi
 
 # Checkout master branch and merge version branch into master
 git checkout $targ
-# git merge $version --no-ff --no-edit
 git merge $src --no-ff --no-edit
 
 # Run version script, creating a version tag, and push commit and tags to remote

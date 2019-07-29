@@ -2,18 +2,27 @@
 
 # Assuming you have a master and dev branch, and that you make new
 # release branches named as the version they correspond to, e.g. 1.0.3
-# Usage: ./release.sh 1.0.3
+# Usage: ./release.sh 1.0.3 develop master
 
 # Get version argument and verify
-version=$1
-if [ -z "$version" ]; then
-  echo "Please specify a version"
+version=$1 
+src=$2
+targ=$3
+
+# Get version from package.json
+#PKG_VERSION=$(node -pe "require('./package.json').version")
+
+if [ -z "$version" || -z "$src" || -z "$targ"]; then
+  echo "Please specify a version or source branch and target branch"
   exit
 fi
 
+
+
 # Output
-echo "Releasing version $version"
+echo "Releasing version $version merging from $src -> $targ"
 echo "-------------------------------------------------------------------------"
+
 
 # Get current branch and checkout if needed
 # branch=$(git symbolic-ref --short -q HEAD)
@@ -29,9 +38,9 @@ if ! git diff-index --quiet HEAD --; then
 fi
 
 # Checkout master branch and merge version branch into master
-git checkout master
+git checkout $targ
 # git merge $version --no-ff --no-edit
-git merge develop --no-ff --no-edit
+git merge $src --no-ff --no-edit
 
 # Run version script, creating a version tag, and push commit and tags to remote
 npm version $version
@@ -39,10 +48,9 @@ git push
 git push --tags
 
 # Checkout dev branch and merge master into dev (to ensure we have the version)
-git checkout develop
-git merge master --no-ff --no-edit
+git checkout $src
+git merge $targ --no-ff --no-edit
 git push
-
 
 
 # Success

@@ -35,6 +35,14 @@ fi
 # Checkout master branch and merge test branch into master
 git checkout $targ
 git pull 
+
+#Ensure src branch is updated with master branch
+COMMITS_COUNT = git rev-list --count master..develop
+if [ COMMIT_AHEAD_COUNT -gt 0 ]; then
+  echo "$src branch is $COMMITS_COUNT behind $targ. Please update $src branch with $targ branch"
+  echo "Aborting"
+  exit
+fi
 git merge $src --no-ff --no-edit
 
 # Revert the changes and exit if conflicts exists

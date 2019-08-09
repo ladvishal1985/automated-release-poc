@@ -37,8 +37,8 @@ git checkout $targ
 git pull 
 
 #Ensure src branch is updated with master branch
-COMMITS_COUNT = git rev-list --count master..develop
-if [ COMMIT_AHEAD_COUNT -gt 0 ]; then
+COMMIT_AHEAD_CNT = git rev-list --count master..develop
+if [ COMMIT_AHEAD_CNT -gt 0 ]; then
   echo "$src branch is $COMMITS_COUNT behind $targ. Please update $src branch with $targ branch"
   echo "Aborting"
   exit

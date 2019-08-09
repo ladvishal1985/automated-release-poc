@@ -1,5 +1,5 @@
 var inquirer = require('inquirer');
-
+// COmments
 const requireLetterAndNumber = value => {
   if (/\w/.test(value) && /\d/.test(value)) {
     return true;

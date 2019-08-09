@@ -1,2 +1,3 @@
 node_modules
-*.sh
+release-regression.sh
+release-master.sh

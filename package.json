@@ -1,6 +1,6 @@
 {
   "name": "automated-release-poc",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "Sample project to demonstrate automated release process.",
   "main": "index.js",
   "scripts": {

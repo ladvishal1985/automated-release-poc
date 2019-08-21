@@ -3,7 +3,7 @@
 # Assuming you have a master and test branch, and that you make new
 # tag on master branch the script will do merge from develop to master
 # push a new tag named as the version they correspond to, e.g. 1.0.3
-# Usage: ./release.sh develop test regression 1.0.3 
+# Usage: ./release.sh develop test regression 1.0.3
 
 # Get version argument and verify
 src=${1:-develop}
@@ -19,11 +19,10 @@ if [ -z "$src" ] || [ -z "$targ" ]; then
   echo "Please specify appropriate source branch and target branch"
   exit
 fi
-if [ -z "$version" ] &&  [ "$release" = "regression" ]; then
+if [ -z "$version" ] && [ "$release" = "regression" ]; then
   echo "Please specify appropriate version"
   exit
 fi
-exit
 
 # Step 2: Get version from package.json and display info
 PKG_VERSION=$(node -pe "require('./package.json').version")

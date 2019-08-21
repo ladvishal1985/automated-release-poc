@@ -50,34 +50,31 @@ if [ "$COMMIT_AHEAD_CNT" -gt 0 ]; then
   git checkout $src
   exit
 fi
-echo "No merge conflicts!!"
 
 echo "Step 6: Merge develop branch into test and update the version"
 git merge $src --no-ff --no-edit
-npm version $version -m "Updated the version to $version"
-git push
-echo "Merge from '"$src"' to '"$targ"' successfull!"
-
-echo "Step 7: Revert the changes and exit if conflicts exists"
 CONFLICTS=$(git ls-files -u | wc -l)
 echo "Conflicts $CONFLICTS"
 if [ "$CONFLICTS" -gt 0 ]; then
+  echo "Step 7: Revert the changes and exit if conflicts exists"
   echo "There is a merge conflict. Please update '"$src"' with $'"$targ"' branch and resolve conflicts."
   echo "Aborting"
   git merge --abort
   git checkout $src
   exit 1
 fi
-echo "No conflicts exists merge successfull!"
+
+npm version $version -m "Updated the version to $version"
+git push
+echo "Merge from '"$src"' to '"$targ"' successfull!"
 
 if [ "$release" = "tag" ]; then
   echo "Create a tag on master once merge is success"
   git checkout master
   git tag $PKG_VERSION -m "Code Freeze $d"
   git push --tags
+  echo "New Tag created!"
 fi
-
-echo "New Tag created!"
 
 echo "Step 8: Get changes from target branch to source to ensure we have the version."
 git checkout $src

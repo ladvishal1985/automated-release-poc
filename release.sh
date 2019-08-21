@@ -3,7 +3,9 @@
 # Assuming you have a master and test branch, and that you make new
 # tag on master branch the script will do merge from develop to master
 # push a new tag named as the version they correspond to, e.g. 1.0.3
-# Usage: ./release.sh develop test regression 1.0.3
+# Usage:
+# # # Regression: ./release.sh develop test regression 1.0.3
+# # # Tag: ./release.sh test master tag
 
 # Get version argument and verify
 src=${1:-develop}
@@ -64,7 +66,7 @@ if [ "$CONFLICTS" -gt 0 ]; then
   exit 1
 fi
 
-npm version $version -m "Updated the version to $version"
+npm --no-git-tag-version version $version -m "Updated the version to $version"
 git push
 echo "Merge from '"$src"' to '"$targ"' successfull!"
 

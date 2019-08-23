@@ -66,7 +66,9 @@ if [ "$CONFLICTS" -gt 0 ]; then
   exit 1
 fi
 
-npm --no-git-tag-version version $version -m "Updated the version to $version"
+npm --no-git-tag-version version $version 
+git add . 
+git commit -m "Updated the version to $version"
 git push
 echo "Merge from '"$src"' to '"$targ"' successfull!"
 

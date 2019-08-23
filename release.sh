@@ -28,22 +28,28 @@ fi
 
 # Step 2: Get version from package.json and display info
 PKG_VERSION=$(node -pe "require('./package.json').version")
+if [ $(git tag -l "$version") ]; then
+  echo "The $version tag already exists. Please try another tag!"
+  exit
+fi
 echo "Current Application version is $PKG_VERSION"
 echo "Releasing version for regression is $version. Merging from $src -> $targ"
 echo "-------------------------------------------------------------------------"
 
-echo "Step 3: Ensure working directory in version branch clean"
+echo "Ensure working directory in version branch clean"
 git update-index -q --refresh
 if ! git diff-index --quiet HEAD --; then
   echo "Working directory not clean, please commit your changes first"
   exit
 fi
 
-echo "Step 4: Checkout test branch and get latest code"
+echo "Checkout test branch and get latest code"
+git checkout $src
+git pull
 git checkout $targ
 git pull
 
-echo "Step 5: Check if target branch is not ahead of source branch"
+echo "Check if target branch is not ahead of source branch"
 COMMIT_AHEAD_CNT=$(git rev-list --count $src..$targ)
 echo "$src branch is $COMMIT_AHEAD_CNT commits behind $targ."
 if [ "$COMMIT_AHEAD_CNT" -gt 0 ]; then
@@ -53,12 +59,12 @@ if [ "$COMMIT_AHEAD_CNT" -gt 0 ]; then
   exit
 fi
 
-echo "Step 6: Merge develop branch into test and update the version"
+echo "Merge develop branch into test and update the version"
 git merge $src --no-ff --no-edit
 CONFLICTS=$(git ls-files -u | wc -l)
 echo "Conflicts $CONFLICTS"
 if [ "$CONFLICTS" -gt 0 ]; then
-  echo "Step 7: Revert the changes and exit if conflicts exists"
+  echo "Revert the changes and exit if conflicts exists"
   echo "There is a merge conflict. Please update '"$src"' with $'"$targ"' branch and resolve conflicts."
   echo "Aborting"
   git merge --abort
@@ -66,21 +72,21 @@ if [ "$CONFLICTS" -gt 0 ]; then
   exit 1
 fi
 
-npm --no-git-tag-version version $version 
-git add . 
+npm --no-git-tag-version version $version
+git add .
 git commit -m "Updated the version to $version"
 git push
 echo "Merge from '"$src"' to '"$targ"' successfull!"
 
 if [ "$release" = "tag" ]; then
   echo "Create a tag on master once merge is success"
-  git checkout master
-  git tag $PKG_VERSION -m "Code Freeze $d"
+  git checkout $targ # Here $targ should be a master branch
+  git tag "v$PKG_VERSION" -m "Code Freeze $d"
   git push --tags
   echo "New Tag created!"
 fi
 
-echo "Step 8: Get changes from target branch to source to ensure we have the version."
+echo "Get changes from target branch to source to ensure we have the version."
 git checkout $src
 git merge $targ --no-ff --no-edit
 git push
